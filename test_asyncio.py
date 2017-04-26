@@ -18,14 +18,14 @@ def main():
         """
         return await reader.readline()
 
-    async def safe_read(reader):
+    async def read_non_blocking(reader):
         """Reads line from reader, this will return if no data is received
            within timeout
         """
         try:
             return await asyncio.wait_for(reader.readline(), timeout=.2)
         except Exception as e:
-            print('did not find data', e)
+            pass
 
     async def node(serial_port, max_reads):
         print('[node] Started node on', serial_port)
@@ -35,7 +35,7 @@ def main():
         try:
             while reads < max_reads:
                 await write(writer, serial_port, 'A')
-                data = await safe_read(reader)
+                data = await read_non_blocking(reader)
                 if data:
                     c = chr(int(data.decode().strip()))
                     assert c == 'A', 'Got an expected value back from echo node'
@@ -46,7 +46,7 @@ def main():
             print('[node] Failed', serial_port, e)
 
     ser_ports = ['/dev/cu.usbmodem142421', '/dev/cu.usbmodem142411', '/dev/cu.usbmodem14231']
-    tasks = [node(port, 100) for port in ser_ports]
+    tasks = [node(port, 50) for port in ser_ports]
     loop.run_until_complete(asyncio.wait(tasks))
 
 
