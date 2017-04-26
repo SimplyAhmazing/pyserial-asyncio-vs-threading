@@ -1,35 +1,29 @@
 # Asyncio pySerial vs Thread pySerial
 
-Run 1
+## Reads = 100
 ```
-python test_asyncio.py > a1.txt  0.33s user 0.14s system 3% cpu 14.234 total
-python test_threading.py > t1.txt  0.12s user 0.12s system 3% cpu 7.264 total
-```
-
-Run 2
-```
-python test_asyncio.py > a1.txt  0.33s user 0.16s system 3% cpu 14.291 total
-python test_threading.py > t2.txt  0.12s user 0.12s system 3% cpu 7.254 total
+  python test_asyncio.py > /dev/null  0.25s user 0.15s system 23% cpu 1.706 total
+python test_threading.py > /dev/null  0.13s user 0.17s system 19% cpu 1.513 total
 ```
 
-## Asyncio w/uvloop
-Run 1:
 ```
-time python test_asyncio.py > a3.txt  0.28s user 0.17s system 3% cpu 14.605 total
-```
-
-Run 2:
-```
-time python test_asyncio.py > a3.txt  0.28s user 0.16s system 3% cpu 14.562 total
+  python test_asyncio.py > /dev/null  0.26s user 0.19s system 23% cpu 1.936 total
+python test_threading.py > /dev/null  0.14s user 0.13s system 18% cpu 1.427 total
 ```
 
+## Reads = 1000
+```
+  python test_asyncio.py > /dev/null  0.83s user 0.35s system 21% cpu 5.484 total
+python test_threading.py > /dev/null  0.42s user 0.27s system 13% cpu 5.122 total
+```
 
-## Asyncio w/uvloop && safe_read timeout=.02
 ```
-python test_asyncio.py > a4.txt  0.56s user 0.27s system 7% cpu 11.181 total
+  python test_asyncio.py > /dev/null  0.72s user 0.31s system 18% cpu 5.476 total
+python test_threading.py > /dev/null  0.49s user 0.28s system 14% cpu 5.275 total
 ```
 
-## Asyncio w/uvloop && safe_read timeout=.2
+## Reads=50 & arduino delay=100ms
 ```
-python test_asyncio.py > a4.txt  0.27s user 0.19s system 4% cpu 11.329 total
+  python test_asyncio.py > /dev/null  0.24s user 0.17s system 6% cpu 6.284 total
+python test_threading.py > /dev/null  0.12s user 0.15s system 4% cpu 6.116 total
 ```
