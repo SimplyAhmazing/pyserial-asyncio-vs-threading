@@ -1,8 +1,11 @@
 import asyncio
+import uvloop
+
 import serial_asyncio
 
 
 def main():
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.get_event_loop()
 
     async def write(writer, serial_port, char):
@@ -11,20 +14,26 @@ def main():
         await writer.drain()
 
     async def read(reader):
+        """Reads line from reader, this will block until data is received
+        """
         return await reader.readline()
 
     async def safe_read(reader):
+        """Reads line from reader, this will return if no data is received
+           within timeout
+        """
         try:
-            return await asyncio.wait_for(reader.readline(), timeout=1)
+            return await asyncio.wait_for(reader.readline(), timeout=.2)
         except Exception as e:
             print('did not find data', e)
 
     async def node(serial_port, max_reads):
         print('[node] Started node on', serial_port)
-        reader, writer = await serial_asyncio.open_serial_connection(url=serial_port, baudrate=115200, loop=loop)
+        reader, writer = await serial_asyncio.open_serial_connection(
+            url=serial_port, baudrate=115200, loop=loop)
         reads = 0
         try:
-            while not reader.at_eof() and reads < max_reads:
+            while reads < max_reads:
                 await write(writer, serial_port, 'A')
                 data = await safe_read(reader)
                 if data:
